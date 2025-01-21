@@ -128,15 +128,19 @@
             });
 
             notificationSound.onended = () => {
+                playCount = 0;
                 const speech = new SpeechSynthesisUtterance();
                 speech.text = textToRead;
                 speech.lang = 'id-ID';
-                window.speechSynthesis.speak(speech);
-            };
-            notificationSound.onended = () => {
-                const speech = new SpeechSynthesisUtterance();
-                speech.text = textToRead;
-                speech.lang = 'id-ID';
+                speech.onend = () => {
+                    playCount++;
+                    if (playCount < 2) {
+                        // Speak the text again if it hasn't been played twice
+                        window.speechSynthesis.speak(speech);
+                    }
+                };
+        
+                // Start the first speech
                 window.speechSynthesis.speak(speech);
             };
         }
