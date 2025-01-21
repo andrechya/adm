@@ -63,7 +63,7 @@
 <body>
     <div class="container mt-4">
         <h4 class="text-center">TEXT TO SPEECH WITH NOTIF</h4>
-        <audio id="notifAudio" src="notif.mp3" preload="auto"></audio>
+        <audio id="notifAudio" src="./notif.mp3" preload="auto"></audio>
         <form id="dataForm">
             <div class="form-container">
                 <div class="form-group">
@@ -127,6 +127,12 @@
                 console.log('Audio play blocked:', error);
             });
 
+            notificationSound.onended = () => {
+                const speech = new SpeechSynthesisUtterance();
+                speech.text = textToRead;
+                speech.lang = 'id-ID';
+                window.speechSynthesis.speak(speech);
+            };
             notificationSound.onended = () => {
                 const speech = new SpeechSynthesisUtterance();
                 speech.text = textToRead;
