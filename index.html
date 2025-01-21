@@ -128,7 +128,7 @@
             });
 
             notificationSound.onended = () => {
-                playCount = 0;
+                let playCount = 0;
                 const speech = new SpeechSynthesisUtterance();
                 speech.text = textToRead;
                 speech.lang = 'id-ID';
