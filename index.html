@@ -180,39 +180,40 @@
         function updateTable() {
             const tableBody = document.querySelector('#dataTable tbody');
             tableBody.innerHTML = '';
-
-            data.forEach((item, index) => {
+        
+            data.slice().reverse().forEach((item, index) => {
                 const row = tableBody.insertRow();
-
+        
                 row.id = 'row-' + index;
-
+        
                 const nameCell = row.insertCell(0);
                 nameCell.className = 'name';
                 nameCell.contentEditable = 'true';
                 nameCell.innerText = item.name;
-
+        
                 const plateCell = row.insertCell(1);
                 plateCell.className = 'plate';
                 plateCell.contentEditable = 'true';
                 plateCell.innerText = item.plate;
-
+        
                 const textCell = row.insertCell(2);
                 textCell.className = 'otherText';
                 textCell.contentEditable = 'true';
                 textCell.innerText = item.text;
-
+        
                 const actionCell = row.insertCell(3);
                 actionCell.innerHTML = `
                     <button onclick="readText('row-${index}')">Dengarkan</button>
                     <button onclick="lockRow('row-${index}')">Lock</button>
                     <button onclick="confirmRemoveRow('row-${index}')">Remove</button>
                 `;
-
+        
                 addEditableListener(nameCell);
                 addEditableListener(plateCell);
                 addEditableListener(textCell);
             });
         }
+
 
         function lockRow(rowId) {
             const row = document.getElementById(rowId);
