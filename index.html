@@ -79,8 +79,16 @@
                     <input type="text" id="plateInput" name="plate" placeholder="Plat Nomor">
                 </div>
                 <div class="form-group">
-                    <input type="text" id="textInput" name="text" placeholder="Text Lain" required>
+                    <input list="textOptions" id="textInput" name="text" placeholder="Pilih atau Ketik Text" required> 
+                    <datalist id="textOptions">
+                        <option value="Dokumen Eldi telah selesai">
+                        <option value="Buku serah terima Eldi, ditunggu di admin">
+                        <option value="Ditunggu di admin">
+                        <option value="Angkat telponnya">
+<!--                     <input type="text" id="textInput" name="text" placeholder="Text Lain" required> -->
                 </div>
+
+                
                 <div class="form-group">
                     <button type="submit">Tambahkan</button>
                 </div>
