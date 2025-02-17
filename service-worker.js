@@ -2,6 +2,7 @@ const cacheName = "offline-cache-v1";
 const filesToCache = [
   "./",
   "./index.html",
+  "./data.json",
   "./css/bootstrapMin.css",
   "./js/sweetalert2@11.js",
   "./favicon.ico",
