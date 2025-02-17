@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <link rel="manifest" href="manifest.json">
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(() => console.log("✅ Service Worker Terdaftar!"))
+          .catch(error => console.log("❌ Service Worker Gagal:", error));
+      }
+    </script>
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="./css/bootstrapMin.css">
     <script src="./js/sweetalert2@11.js"></script>
@@ -283,13 +291,6 @@
         }
 
         document.querySelectorAll('td[contenteditable="true"]').forEach(addEditableListener); 
-    </script>
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('service-worker.js')
-          .then(() => console.log("Service Worker Registered"))
-          .catch((err) => console.log("Service Worker Failed", err));
-      }
     </script>
 
 </body>
