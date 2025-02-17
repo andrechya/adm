@@ -283,5 +283,13 @@
 
         document.querySelectorAll('td[contenteditable="true"]').forEach(addEditableListener); 
     </script>
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("service-worker.js")
+                .then(() => console.log("Service Worker terdaftar!"))
+                .catch(error => console.log("Service Worker gagal:", error));
+        }
+    </script>
+
 </body>
 </html>
