@@ -74,38 +74,31 @@
     <div class="container mt-4">
         <h4 class="text-center">TEXT TO SPEECH WITH NOTIF</h4>
         <audio id="notifAudio" src="./notif.mp3" preload="auto"></audio>
-        <form id="dataForm">
-            <div class="form-container">
-                <div class="form-group">
-                    <input list="nameOptions" id="nameInput" name="name" placeholder="Pilih atau Ketik Nama">
-                    <datalist id="nameOptions">
-                        <option value="dirson">
-                        <option value="jamal">
-                        <option value="nadi">
-                        <option value="dondo">
-                    </datalist>
-                </div>
-                <div class="form-group">
-                    <input type="text" id="plateInput" name="plate" placeholder="Plat Nomor">
-                </div>
-                <div class="form-group">
-                    <input list="textOptions" id="textInput" name="text" placeholder="Pilih atau Ketik Text" required> 
-                    <datalist id="textOptions">
-                        <option value="Dokumen Eldi telah selesai">
-                        <option value="Buku serah terima Eldi, ditunggu di admin">
-                        <option value="Ditunggu di admin">
-                        <option value="Angkat telponnya">
-                    </datalist>
-<!--                     <input type="text" id="textInput" name="text" placeholder="Text Lain" required> -->
-                </div>
+  <form id="dataForm">
+    <div class="form-container">
+        <!-- Input untuk Nama -->
+        <div class="form-group">
+            <input list="nameOptions" id="nameInput" name="name" placeholder="Pilih atau Ketik Nama">
+            <datalist id="nameOptions"></datalist>
+        </div>
 
-                
-                <div class="form-group">
-                    <button type="submit">Tambahkan</button>
-                </div>
-            </div>
-        </form>
+        <!-- Input untuk Plat Nomor -->
+        <div class="form-group">
+            <input list="plateOptions" id="plateInput" name="plate" placeholder="Pilih atau Ketik Plat Nomor">
+            <datalist id="plateOptions"></datalist>
+        </div>
 
+        <!-- Input untuk Teks Lain -->
+        <div class="form-group">
+            <input list="textOptions" id="textInput" name="text" placeholder="Pilih atau Ketik Text">
+            <datalist id="textOptions"></datalist>
+        </div>
+
+        <div class="form-group">
+            <button type="submit">Tambahkan</button>
+        </div>
+    </div>
+</form>
         <table id="dataTable">
             <thead>
                 <tr>
