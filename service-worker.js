@@ -2,13 +2,14 @@ const cacheName = "offline-cache-v1";
 const filesToCache = [
   "./",
   "./index.html",
+  "./notif.mp3",
   "./data.json",
   "./css/bootstrapMin.css",
   "./js/sweetalert2@11.js",
   "./favicon.ico",
   "./icon.png",
-  "./manifest.json",
-  "./notif.mp3"
+  "./manifest.json"
+  
 ];
 
 // Install Service Worker & Cache Resources
