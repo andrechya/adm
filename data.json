@@ -1,5 +1,22 @@
-{
-  "names": ["Dirson", "Jamal", "Nadi", "Dondo"],
-  "plates": ["B 1234 XY", "B 5678 AB", "D 9876 PQ"],
-  "texts": ["Dokumen Eldi telah selesai", "Buku serah terima Eldi, ditunggu di admin", "Ditunggu di admin", "Angkat telponnya"]
-}
+[
+    {
+        "name": "Dirson",
+        "plate": "B 1234 XY",
+        "text": "Dokumen Eldi telah selesai"
+    },
+    {
+        "name": "Jamal",
+        "plate": "B 5678 AB",
+        "text": "Buku serah terima Eldi, ditunggu di admin"
+    },
+    {
+        "name": "Nadi",
+        "plate": "D 9876 PQ",
+        "text": "Ditunggu di admin"
+    },
+    {
+        "name": "Dondo",
+        "plate": "",
+        "text": "Angkat telponnya"
+    }
+]
