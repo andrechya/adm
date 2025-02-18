@@ -310,7 +310,7 @@
 
         document.querySelectorAll('td[contenteditable="true"]').forEach(addEditableListener); 
     </script>
-<!--     <script>
+    <script>
         // Fungsi untuk memuat data dari file JSON eksternal
         fetch('data.json')
             .then(response => response.json())
@@ -342,49 +342,6 @@
                 });
             })
             .catch(error => console.error('Error loading the JSON file:', error));
-    </script> -->
-    
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-        fetch("data.json")
-            .then(response => response.json())
-            .then(data => {
-                setupAutocomplete("nameInput", "nameSuggestions", data.map(item => item.name));
-                setupAutocomplete("plateInput", "plateSuggestions", data.map(item => item.plate));
-                setupAutocomplete("textInput", "textSuggestions", data.map(item => item.text));
-            })
-            .catch(error => console.error("Gagal memuat data:", error));
-    });
-    
-    function setupAutocomplete(inputId, suggestionId, dataList) {
-        const input = document.getElementById(inputId);
-        const suggestionBox = document.getElementById(suggestionId);
-    
-        input.addEventListener("input", function () {
-            const inputValue = this.value.toLowerCase();
-            suggestionBox.innerHTML = "";
-    
-            if (inputValue) {
-                const filteredData = dataList.filter(item => item.toLowerCase().includes(inputValue));
-    
-                filteredData.forEach(item => {
-                    const suggestionItem = document.createElement("li");
-                    suggestionItem.textContent = item;
-                    suggestionItem.addEventListener("click", function () {
-                        input.value = item;
-                        suggestionBox.innerHTML = ""; // Hilangkan saran setelah dipilih
-                    });
-                    suggestionBox.appendChild(suggestionItem);
-                });
-            }
-        });
-    
-        document.addEventListener("click", function (event) {
-            if (!input.contains(event.target) && !suggestionBox.contains(event.target)) {
-                suggestionBox.innerHTML = ""; // Sembunyikan saat klik di luar
-            }
-        });
-    }
     </script>
     
 </body>
