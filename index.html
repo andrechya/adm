@@ -74,31 +74,31 @@
     <div class="container mt-4">
         <h4 class="text-center">TEXT TO SPEECH WITH NOTIF</h4>
         <audio id="notifAudio" src="./notif.mp3" preload="auto"></audio>
-        <form id="dataForm">
-            <div class="form-container">
-                <!-- Input untuk Nama -->
-                <div class="form-group">
-                    <input type="text" id="nameInput" name="name" placeholder="Pilih atau Ketik Nama" autocomplete="off">
-                    <ul id="nameSuggestions" class="suggestion-list"></ul>
-                </div>
-        
-                <!-- Input untuk Plat Nomor -->
-                <div class="form-group">
-                    <input type="text" id="plateInput" name="plate" placeholder="Pilih atau Ketik Plat Nomor" autocomplete="off">
-                    <ul id="plateSuggestions" class="suggestion-list"></ul>
-                </div>
-        
-                <!-- Input untuk Teks Lain -->
-                <div class="form-group">
-                    <input type="text" id="textInput" name="text" placeholder="Pilih atau Ketik Text" autocomplete="off">
-                    <ul id="textSuggestions" class="suggestion-list"></ul>
-                </div>
-        
-                <div class="form-group">
-                    <button type="submit">Tambahkan</button>
-                </div>
-            </div>
-        </form>
+  <form id="dataForm">
+    <div class="form-container">
+        <!-- Input untuk Nama -->
+        <div class="form-group">
+            <input list="nameOptions" id="nameInput" name="name" placeholder="Pilih atau Ketik Nama">
+            <datalist id="nameOptions"></datalist>
+        </div>
+
+        <!-- Input untuk Plat Nomor -->
+        <div class="form-group">
+            <input list="plateOptions" id="plateInput" name="plate" placeholder="Pilih atau Ketik Plat Nomor">
+            <datalist id="plateOptions"></datalist>
+        </div>
+
+        <!-- Input untuk Teks Lain -->
+        <div class="form-group">
+            <input list="textOptions" id="textInput" name="text" placeholder="Pilih atau Ketik Text">
+            <datalist id="textOptions"></datalist>
+        </div>
+
+        <div class="form-group">
+            <button type="submit">Tambahkan</button>
+        </div>
+    </div>
+</form>
         <table id="dataTable">
             <thead>
                 <tr>
@@ -138,7 +138,7 @@
             const formattedPlate = formatPlateNumber(plate);
             const formattedName = capitalizeName(name);
             const formattedOtherText = capitalizeOther(otherText);
-            const textToRead = ${formattedName}, ${formattedPlate}, ${formattedOtherText};
+            const textToRead = `${formattedName}, ${formattedPlate}, ${formattedOtherText}`;
 
             const notificationSound = document.getElementById('notifAudio');
             notificationSound.play().catch((error) => {
@@ -150,21 +150,17 @@
                 const speech = new SpeechSynthesisUtterance();
                 speech.text = textToRead;
                 speech.lang = 'id-ID';
-            
-                // Pilih suara perempuan secara eksplisit
-                const voices = window.speechSynthesis.getVoices();
-                speech.voice = voices.find(voice => voice.lang === "id-ID" && voice.name.includes("female")) || voices[0];
-            
                 speech.onend = () => {
                     playCount++;
                     if (playCount < 2) {
+                        // Speak the text again if it hasn't been played twice
                         window.speechSynthesis.speak(speech);
                     }
                 };
-            
+        
+                // Start the first speech
                 window.speechSynthesis.speak(speech);
             };
-
         }
 
         document.getElementById('dataForm').addEventListener('submit', function(event) {
@@ -209,11 +205,11 @@
                 textCell.innerText = item.text;
         
                 const actionCell = row.insertCell(3);
-                actionCell.innerHTML = 
+                actionCell.innerHTML = `
                     <button onclick="readText('row-${index}')">Dengarkan</button>
                     <button onclick="lockRow('row-${index}')">Lock</button>
                     <button onclick="confirmRemoveRow('row-${index}')">Remove</button>
-                ;
+                `;
         
                 addEditableListener(nameCell);
                 addEditableListener(plateCell);
@@ -249,7 +245,7 @@
                 const updatedValue = this.innerText;
                 Swal.fire({
                     title: 'Perubahan Tersimpan',
-                    text: Data berhasil diperbarui: ${updatedValue},
+                    text: `Data berhasil diperbarui: ${updatedValue}`,
                     icon: 'success',
                     timer: 1500,
                     showConfirmButton: false
@@ -321,7 +317,7 @@
                 });
             })
             .catch(error => console.error('Error loading the JSON file:', error));
+
     </script>
-    
 </body>
 </html>
