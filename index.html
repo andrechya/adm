@@ -159,7 +159,7 @@
             const formattedPlate = formatPlateNumber(plate);
             const formattedName = capitalizeName(name);
             const formattedOtherText = capitalizeOther(otherText);
-            const textToRead = `${formattedName}, ${formattedPlate}, ${formattedOtherText}`;
+            const textToRead = ${formattedName}, ${formattedPlate}, ${formattedOtherText};
 
             const notificationSound = document.getElementById('notifAudio');
             notificationSound.play().catch((error) => {
@@ -186,42 +186,28 @@
 
         document.getElementById('dataForm').addEventListener('submit', function(event) {
             event.preventDefault();
-        
-            const name = document.getElementById('nameInput').value.trim();
-            const plate = document.getElementById('plateInput').value.trim();
-            const text = document.getElementById('textInput').value.trim();
-        
-            if (!name || !plate || !text) {
-                alert("Semua kolom harus diisi!");
-                return;
-            }
-        
-            if (!Array.isArray(data)) {
-                data = []; // Reset jika bukan array
-            }
-        
+
+            const name = document.getElementById('nameInput').value;
+            const plate = document.getElementById('plateInput').value;
+            const text = document.getElementById('textInput').value;
+
             const newData = { name, plate, text };
             data.push(newData);
-        
+
             updateTable();
-        
+
             document.getElementById('nameInput').value = '';
             document.getElementById('plateInput').value = '';
             document.getElementById('textInput').value = '';
         });
 
-
         function updateTable() {
             const tableBody = document.querySelector('#dataTable tbody');
             tableBody.innerHTML = '';
         
-            if (!Array.isArray(data)) {
-                console.error("Data is not an array:", data);
-                return;
-            }
-        
             data.slice().reverse().forEach((item, index) => {
                 const row = tableBody.insertRow();
+        
                 row.id = 'row-' + index;
         
                 const nameCell = row.insertCell(0);
@@ -240,18 +226,17 @@
                 textCell.innerText = item.text;
         
                 const actionCell = row.insertCell(3);
-                actionCell.innerHTML = `
+                actionCell.innerHTML = 
                     <button onclick="readText('row-${index}')">Dengarkan</button>
                     <button onclick="lockRow('row-${index}')">Lock</button>
                     <button onclick="confirmRemoveRow('row-${index}')">Remove</button>
-                `;
+                ;
         
                 addEditableListener(nameCell);
                 addEditableListener(plateCell);
                 addEditableListener(textCell);
             });
         }
-
 
 
         function lockRow(rowId) {
@@ -281,7 +266,7 @@
                 const updatedValue = this.innerText;
                 Swal.fire({
                     title: 'Perubahan Tersimpan',
-                    text: `Data berhasil diperbarui: ${updatedValue}`,
+                    text: Data berhasil diperbarui: ${updatedValue},
                     icon: 'success',
                     timer: 1500,
                     showConfirmButton: false
