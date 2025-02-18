@@ -186,28 +186,42 @@
 
         document.getElementById('dataForm').addEventListener('submit', function(event) {
             event.preventDefault();
-
-            const name = document.getElementById('nameInput').value;
-            const plate = document.getElementById('plateInput').value;
-            const text = document.getElementById('textInput').value;
-
+        
+            const name = document.getElementById('nameInput').value.trim();
+            const plate = document.getElementById('plateInput').value.trim();
+            const text = document.getElementById('textInput').value.trim();
+        
+            if (!name || !plate || !text) {
+                alert("Semua kolom harus diisi!");
+                return;
+            }
+        
+            if (!Array.isArray(data)) {
+                data = []; // Reset jika bukan array
+            }
+        
             const newData = { name, plate, text };
             data.push(newData);
-
+        
             updateTable();
-
+        
             document.getElementById('nameInput').value = '';
             document.getElementById('plateInput').value = '';
             document.getElementById('textInput').value = '';
         });
 
+
         function updateTable() {
             const tableBody = document.querySelector('#dataTable tbody');
             tableBody.innerHTML = '';
         
+            if (!Array.isArray(data)) {
+                console.error("Data is not an array:", data);
+                return;
+            }
+        
             data.slice().reverse().forEach((item, index) => {
                 const row = tableBody.insertRow();
-        
                 row.id = 'row-' + index;
         
                 const nameCell = row.insertCell(0);
@@ -237,6 +251,7 @@
                 addEditableListener(textCell);
             });
         }
+
 
 
         function lockRow(rowId) {
