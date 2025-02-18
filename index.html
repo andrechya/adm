@@ -171,17 +171,21 @@
                 const speech = new SpeechSynthesisUtterance();
                 speech.text = textToRead;
                 speech.lang = 'id-ID';
+            
+                // Pilih suara perempuan secara eksplisit
+                const voices = window.speechSynthesis.getVoices();
+                speech.voice = voices.find(voice => voice.lang === "id-ID" && voice.name.includes("female")) || voices[0];
+            
                 speech.onend = () => {
                     playCount++;
                     if (playCount < 2) {
-                        // Speak the text again if it hasn't been played twice
                         window.speechSynthesis.speak(speech);
                     }
                 };
-        
-                // Start the first speech
+            
                 window.speechSynthesis.speak(speech);
             };
+
         }
 
         document.getElementById('dataForm').addEventListener('submit', function(event) {
