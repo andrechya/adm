@@ -4,14 +4,17 @@ const filesToCache = [
   "./notif.mp3",
   "./data.json",
   "./supplier.json",
-  "./css/*",
-  "./js/*",
+  "./css/bootstrapMin.css",
+  "./css/style.css",
+  "./js/eventBtn.js",
+  "./js/eventBtn1.js",
+  "./js/loadConfig.js",
+  "./js/loadConfig1.js",
+  "./js/runServiceWorker.js",
   "./favicon.ico",
   "./icon.png",
   "./manifest.json",
-  "./service-worker.js",
-  "./index.html",
-  "./lp.html"
+  "./service-worker.js"
 ];
 
 // Install Service Worker & Cache Resources
