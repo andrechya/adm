@@ -129,40 +129,67 @@
             return otherText.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
         }
 
-        function readText(rowId) {
-            const row = document.getElementById(rowId);
-            const name = row.querySelector('.name').innerText;
-            const plate = row.querySelector('.plate').innerText;
-            const otherText = row.querySelector('.otherText').innerText;
+function readText(rowId) {
+    const row = document.getElementById(rowId);
+    const name = row.querySelector('.name').innerText;
+    const plate = row.querySelector('.plate').innerText;
+    const otherText = row.querySelector('.otherText').innerText;
 
-            const formattedPlate = formatPlateNumber(plate);
-            const formattedName = capitalizeName(name);
-            const formattedOtherText = capitalizeOther(otherText);
-            const textToRead = `${formattedName}, ${formattedPlate}, ${formattedOtherText}`;
+    const formattedPlate = formatPlateNumber(plate);
+    const formattedName = capitalizeName(name);
+    const formattedOtherText = capitalizeOther(otherText);
+    const textToRead = `${formattedName}, ${formattedPlate}, ${formattedOtherText}`;
 
-            const notificationSound = document.getElementById('notifAudio');
-            notificationSound.play().catch((error) => {
-                console.log('Audio play blocked:', error);
-            });
+    const notificationSound = document.getElementById('notifAudio');
+    
+    notificationSound.play().catch((error) => {
+        console.log('Audio play blocked:', error);
+    });
 
-            notificationSound.onended = () => {
-                let playCount = 0;
-                const speech = new SpeechSynthesisUtterance();
-                speech.text = textToRead;
-                speech.lang = 'id-ID';
-                speech.onend = () => {
-                    playCount++;
-                    if (playCount < 2) {
-                        // Speak the text again if it hasn't been played twice
-                        window.speechSynthesis.speak(speech);
-                    }
-                };
-        
-                // Start the first speech
-                window.speechSynthesis.speak(speech);
+    notificationSound.onended = () => {
+        speakText(textToRead);
+    };
+}
+
+function speakText(text) {
+    const maxChunkLength = 100; // Batas panjang teks per bagian
+    const chunks = splitTextIntoChunks(text, maxChunkLength);
+
+    let index = 0;
+    function speakNextChunk() {
+        if (index < chunks.length) {
+            const speech = new SpeechSynthesisUtterance(chunks[index]);
+            speech.lang = 'id-ID';
+            speech.onend = () => {
+                index++;
+                speakNextChunk(); // Lanjut ke bagian berikutnya
             };
+            window.speechSynthesis.speak(speech);
         }
+    }
 
+    speakNextChunk();
+}
+
+function splitTextIntoChunks(text, maxLength) {
+    const words = text.split(' ');
+    let chunks = [];
+    let currentChunk = '';
+
+    words.forEach(word => {
+        if ((currentChunk + word).length > maxLength) {
+            chunks.push(currentChunk.trim());
+            currentChunk = '';
+        }
+        currentChunk += word + ' ';
+    });
+
+    if (currentChunk.trim()) {
+        chunks.push(currentChunk.trim());
+    }
+
+    return chunks;
+}
         document.getElementById('dataForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
