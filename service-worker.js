@@ -8,8 +8,8 @@ const filesToCache = [
   "./js/sweetalert2@11.js",
   "./favicon.ico",
   "./icon.png",
-  "./manifest.json"
-  
+  "./manifest.json",
+  "./service-worker.js"
 ];
 
 // Install Service Worker & Cache Resources
