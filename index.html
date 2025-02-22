@@ -175,12 +175,6 @@ function speakLongText(text) {
     // Mulai membaca dari bagian pertama
     speakChunk(0).catch(error => console.error("Kesalahan saat membaca:", error));
 }
-
-// Contoh pemanggilan fungsi dengan teks panjang
-speakLongText("Waktu sekolah dulu, jujur aja aku suka banget sama pelajaran Bahasa Indonesia. Apalagi kalau udah disuruh menulis dan membaca cerpen. Ibaratnya, mengarang cerpen itu sama saja dengan menerapkan seluruh ilmu yang kamu pelajari di pelajaran Bahasa Indonesia. Seperti contohnya, tanda baca, berbagai imbuhan, ataupun penerapan jenis-jenis teks. Nah, bagi kamu yang juga suka membaca cerpen, yuk lihat beberapa contoh cerpen singkat dari berbagai macam tema yang seru dan menarik berikut ini.");
-
-}
-
 // Fungsi utama untuk membaca teks dari baris tabel
 function readText(rowId) {
     const row = document.getElementById(rowId);
