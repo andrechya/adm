@@ -15,6 +15,17 @@
             "Nadi",
             "Wahyu"
           ],
-  "plates": ["B 1234 XY", "B 5678 AB", "D 9876 PQ"],
+  "plates": [
+            "F8216HT",
+            "F9276FI",
+            "B9639JQO",
+            "F9720FH",
+            "B9180EAI",
+            "F9046FI",
+            "F9097FL",
+            "F9316FI",
+            "F8796FW",
+            "B9431TWM",
+            "F9743FH"],
   "texts": ["Dokumen Eldi telah selesai", "Buku serah terima Eldi, ditunggu di admin", "Ditunggu di admin", "Angkat telponnya"]
 }
