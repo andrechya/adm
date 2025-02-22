@@ -13,24 +13,20 @@
 </head>
 <body>
     <div class="btnSwitch">
-        <button class="switchPage" onclick="location.href='lp.html'">Switch to LP</button>
+        <button class="switchPage" onclick="location.href='index.html'">Switch to Admin</button>
     </div>
     <div class="container mt-4">
-        <h4 class="text-center">ADMIN PAGING AREA</h4>
+        <h4 class="text-center">LP PAGING AREA</h4>
         <audio id="notifAudio" src="./notif.mp3" preload="auto"></audio>
         <form id="dataForm">
             <div class="form-container">
                 <div class="form-group">
-                    <input list="nameOptions" id="nameInput" name="name" placeholder="Pilih atau Ketik Nama">
-                    <datalist id="nameOptions"></datalist>
+                    <input list="supplierOptions" id="nameInput" name="name" placeholder="Supplier Name">
+                    <datalist id="supplierOptions"></datalist>
                 </div>
                 <div class="form-group">
-                    <input list="plateOptions" id="plateInput" name="plate" placeholder="Pilih atau Ketik Plat Nomor">
-                    <datalist id="plateOptions"></datalist>
-                </div>
-                <div class="form-group">
-                    <input list="textOptions" id="textInput" name="text" placeholder="Pilih atau Ketik Text">
-                    <datalist id="textOptions"></datalist>
+                    <input list="supplTextOptions" id="textInput" name="text" placeholder="Pilih atau Ketik Text">
+                    <datalist id="supplTextOptions"></datalist>
                 </div>
                 <div class="form-group">
                     <button type="submit">Tambahkan</button>
@@ -40,8 +36,7 @@
         <table id="dataTable">
             <thead>
                 <tr>
-                    <th>Nama</th>
-                    <th>Plat Nomor</th>
+                    <th>Supplier</th>
                     <th>Text Lain</th>
                     <th>Aksi</th>
                 </tr>
@@ -53,10 +48,6 @@
 
 <script>
     let data = [];
-
-    function formatPlateNumber(plate) {
-        return plate.toUpperCase();
-    }
 
     function capitalizeText(text) {
         return text.replace(/\b\w/g, char => char.toUpperCase());
@@ -155,28 +146,25 @@
         }
 
         const nameElement = row.querySelector('.name');
-        const plateElement = row.querySelector('.plate');
         const otherTextElement = row.querySelector('.otherText');
 
-        if (!nameElement || !plateElement || !otherTextElement) {
+        if (!nameElement || !otherTextElement) {
             console.error('Elemen yang dibutuhkan tidak ditemukan dalam baris ini.');
             return;
         }
 
         const name = nameElement.innerText.trim();
-        const plate = plateElement.innerText.trim();
         const otherText = otherTextElement.innerText.trim();
 
-        const formattedPlate = formatPlateNumber(plate);
         const formattedName = capitalizeText(name);
         const formattedOtherText = capitalizeText(otherText);
 
-        const textToRead = `${formattedName}, ${formattedPlate}, ${formattedOtherText}`;
+        const textToRead = `${formattedName}, ${formattedOtherText}`;
 
         startReadingWithNotification(textToRead);
     }
 </script>
-<script src="./js/eventBtn.js"></script>
-<script src="./js/loadConfig.js"></script>
+<script src="./js/eventBtn1.js"></script>
+<script src="./js/loadConfig1.js"></script>
 </body>
 </html>
