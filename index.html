@@ -113,100 +113,101 @@
         </table>
 
     </div>
-    <script>
-        let data = [];
-        let lockedRows = {};
+<script>
+    let data = [];
+    let lockedRows = {};
 
-// Fungsi untuk memformat nomor plat
-function formatPlateNumber(plate) {
-    return plate.toUpperCase();
-}
-
-// Fungsi untuk memformat nama agar huruf pertama besar
-function capitalizeName(name) {
-    return name.replace(/\b\w/g, char => char.toUpperCase());
-}
-
-// Fungsi untuk memformat teks lain
-function capitalizeOther(text) {
-    return text.replace(/\b\w/g, char => char.toUpperCase());
-}
-
-// Fungsi untuk membacakan teks panjang secara bertahap tanpa terputus
-// Fungsi untuk membacakan teks panjang dengan pemisahan otomatis
-function speakLongText(text) {
-    const maxChunkLength = 200; // Maksimal 200 karakter per bagian
-    const utterances = [];
-
-    // Potong teks menjadi beberapa bagian
-    for (let i = 0; i < text.length; i += maxChunkLength) {
-        let chunk = text.substring(i, i + maxChunkLength);
-        utterances.push(chunk);
+    // Fungsi untuk memformat nomor plat
+    function formatPlateNumber(plate) {
+        return plate.toUpperCase();
     }
 
-    function speakChunk(index) {
-        return new Promise((resolve, reject) => {
-            if (index >= utterances.length) {
-                resolve(); // Selesai membaca semua bagian
-                return;
+    // Fungsi untuk membuat huruf pertama dari setiap kata menjadi besar
+    function capitalizeText(text) {
+        return text.replace(/\b\w/g, char => char.toUpperCase());
+    }
+
+    // Fungsi untuk membacakan teks panjang dengan pemisahan otomatis
+    function speakLongText(text) {
+        const maxChunkLength = 200; // Maksimal 200 karakter per bagian
+        let utterances = [];
+
+        // Pisahkan teks berdasarkan spasi agar lebih alami
+        let words = text.split(" ");
+        let chunk = "";
+
+        for (let word of words) {
+            if ((chunk + word).length > maxChunkLength) {
+                utterances.push(chunk.trim());
+                chunk = "";
             }
+            chunk += word + " ";
+        }
+        if (chunk) utterances.push(chunk.trim()); // Tambahkan sisa teks terakhir
 
-            let utterance = new SpeechSynthesisUtterance(utterances[index]);
-            utterance.lang = 'id-ID';
-            utterance.rate = 1.0;
-            utterance.pitch = 1.0;
+        function speakChunk(index) {
+            return new Promise((resolve, reject) => {
+                if (index >= utterances.length) {
+                    resolve(); // Selesai membaca semua bagian
+                    return;
+                }
 
-            utterance.onend = () => {
-                setTimeout(() => resolve(speakChunk(index + 1)), 500); // Beri jeda sebelum lanjut
-            };
+                let utterance = new SpeechSynthesisUtterance(utterances[index]);
+                utterance.lang = 'id-ID';
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
 
-            utterance.onerror = (event) => {
-                console.error("Error saat membaca teks:", event);
-                reject(event);
-            };
+                utterance.onend = () => {
+                    setTimeout(() => resolve(speakChunk(index + 1)), 500); // Beri jeda sebelum lanjut
+                };
 
-            window.speechSynthesis.speak(utterance);
-        });
+                utterance.onerror = (event) => {
+                    console.error("Error saat membaca teks:", event);
+                    reject(event);
+                };
+
+                window.speechSynthesis.speak(utterance);
+            });
+        }
+
+        // Mulai membaca dari bagian pertama
+        speakChunk(0).catch(error => console.error("Kesalahan saat membaca:", error));
     }
 
-    // Hentikan pembacaan sebelumnya sebelum mulai yang baru
-    window.speechSynthesis.cancel();
-    
-    // Mulai membaca dari bagian pertama
-    speakChunk(0).catch(error => console.error("Kesalahan saat membaca:", error));
-}
-// Fungsi utama untuk membaca teks dari baris tabel
-function readText(rowId) {
-    const row = document.getElementById(rowId);
-    
-    if (!row) {
-        console.error(`Row dengan ID ${rowId} tidak ditemukan.`);
-        return;
+    // Fungsi utama untuk membaca teks dari baris tabel
+    function readText(rowId) {
+        const row = document.getElementById(rowId);
+        
+        if (!row) {
+            console.error(`Row dengan ID ${rowId} tidak ditemukan.`);
+            return;
+        }
+
+        const nameElement = row.querySelector('.name');
+        const plateElement = row.querySelector('.plate');
+        const otherTextElement = row.querySelector('.otherText');
+
+        if (!nameElement || !plateElement || !otherTextElement) {
+            console.error('Elemen yang dibutuhkan tidak ditemukan dalam baris ini.');
+            return;
+        }
+
+        const name = nameElement.innerText.trim();
+        const plate = plateElement.innerText.trim();
+        const otherText = otherTextElement.innerText.trim();
+
+        // Format teks sebelum dibacakan
+        const formattedPlate = formatPlateNumber(plate);
+        const formattedName = capitalizeText(name);
+        const formattedOtherText = capitalizeText(otherText);
+
+        const textToRead = `${formattedName}, ${formattedPlate}, ${formattedOtherText}`;
+        
+        window.speechSynthesis.cancel(); // Hentikan TTS yang sedang berjalan sebelum mulai baru
+        speakLongText(textToRead);
     }
+</script>
 
-    const nameElement = row.querySelector('.name');
-    const plateElement = row.querySelector('.plate');
-    const otherTextElement = row.querySelector('.otherText');
-
-    if (!nameElement || !plateElement || !otherTextElement) {
-        console.error('Elemen yang dibutuhkan tidak ditemukan dalam baris ini.');
-        return;
-    }
-
-    const name = nameElement.innerText;
-    const plate = plateElement.innerText;
-    const otherText = otherTextElement.innerText;
-
-    const formattedPlate = formatPlateNumber(plate);
-    const formattedName = capitalizeName(name);
-    const formattedOtherText = capitalizeOther(otherText);
-
-    const textToRead = `${formattedName}, ${formattedPlate}, ${formattedOtherText}`;
-    
-    window.speechSynthesis.cancel(); // Hentikan TTS yang sedang berjalan
-    speakLongText(textToRead);
-}
-    </script>
     
 <script>
         document.getElementById('dataForm').addEventListener('submit', function(event) {
