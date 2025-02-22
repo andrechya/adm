@@ -133,37 +133,52 @@ function capitalizeOther(text) {
 }
 
 // Fungsi untuk membacakan teks panjang secara bertahap tanpa terputus
+// Fungsi untuk membacakan teks panjang dengan pemisahan otomatis
 function speakLongText(text) {
-    const utterances = [];
     const maxChunkLength = 200; // Maksimal 200 karakter per bagian
-    
+    const utterances = [];
+
+    // Potong teks menjadi beberapa bagian
     for (let i = 0; i < text.length; i += maxChunkLength) {
         let chunk = text.substring(i, i + maxChunkLength);
-        let utterance = new SpeechSynthesisUtterance(chunk);
-        utterance.lang = 'id-ID';
-        utterance.rate = 1.0;
-        utterance.pitch = 1.0;
-
-        utterances.push(utterance);
+        utterances.push(chunk);
     }
 
-    function speakChunks(index) {
-        if (index < utterances.length) {
-            utterances[index].onend = () => {
-                setTimeout(() => speakChunks(index + 1), 500); // Beri jeda 500ms
+    function speakChunk(index) {
+        return new Promise((resolve, reject) => {
+            if (index >= utterances.length) {
+                resolve(); // Selesai membaca semua bagian
+                return;
+            }
+
+            let utterance = new SpeechSynthesisUtterance(utterances[index]);
+            utterance.lang = 'id-ID';
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+
+            utterance.onend = () => {
+                setTimeout(() => resolve(speakChunk(index + 1)), 500); // Beri jeda sebelum lanjut
             };
 
-            utterances[index].onerror = (event) => {
+            utterance.onerror = (event) => {
                 console.error("Error saat membaca teks:", event);
-                setTimeout(() => speakChunks(index + 1), 500); // Lanjut ke potongan berikutnya meskipun error
+                reject(event);
             };
 
-            window.speechSynthesis.speak(utterances[index]);
-        }
+            window.speechSynthesis.speak(utterance);
+        });
     }
 
-    window.speechSynthesis.cancel(); // Hentikan pembacaan sebelumnya
-    speakChunks(0);
+    // Hentikan pembacaan sebelumnya sebelum mulai yang baru
+    window.speechSynthesis.cancel();
+    
+    // Mulai membaca dari bagian pertama
+    speakChunk(0).catch(error => console.error("Kesalahan saat membaca:", error));
+}
+
+// Contoh pemanggilan fungsi dengan teks panjang
+speakLongText("Waktu sekolah dulu, jujur aja aku suka banget sama pelajaran Bahasa Indonesia. Apalagi kalau udah disuruh menulis dan membaca cerpen. Ibaratnya, mengarang cerpen itu sama saja dengan menerapkan seluruh ilmu yang kamu pelajari di pelajaran Bahasa Indonesia. Seperti contohnya, tanda baca, berbagai imbuhan, ataupun penerapan jenis-jenis teks. Nah, bagi kamu yang juga suka membaca cerpen, yuk lihat beberapa contoh cerpen singkat dari berbagai macam tema yang seru dan menarik berikut ini.");
+
 }
 
 // Fungsi utama untuk membaca teks dari baris tabel
