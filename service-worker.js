@@ -1,6 +1,8 @@
 const cacheName = "offline-cache-v1";
 const filesToCache = [
   "./",
+  "./index.html",
+  "./lp.html",
   "./notif.mp3",
   "./data.json",
   "./supplier.json",
