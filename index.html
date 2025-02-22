@@ -151,45 +151,67 @@ function readText(rowId) {
     };
 }
 
-function speakText(text) {
-    const maxChunkLength = 100; // Batas panjang teks per bagian
-    const chunks = splitTextIntoChunks(text, maxChunkLength);
+// Fungsi untuk membacakan teks panjang secara bertahap
+function speakLongText(text) {
+    const utterances = [];
+    const maxChunkLength = 200; // Batasi 200 karakter per bagian
+    
+    for (let i = 0; i < text.length; i += maxChunkLength) {
+        let chunk = text.substring(i, i + maxChunkLength);
+        let utterance = new SpeechSynthesisUtterance(chunk);
+        utterance.lang = 'id-ID';
+        utterance.rate = 1.0; // Atur kecepatan bicara normal
+        utterance.pitch = 1.0; // Atur pitch normal
+        utterances.push(utterance);
+    }
 
-    let index = 0;
-    function speakNextChunk() {
-        if (index < chunks.length) {
-            const speech = new SpeechSynthesisUtterance(chunks[index]);
-            speech.lang = 'id-ID';
-            speech.onend = () => {
-                index++;
-                speakNextChunk(); // Lanjut ke bagian berikutnya
+    function speakChunks(index) {
+        if (index < utterances.length) {
+            utterances[index].onend = () => {
+                setTimeout(() => speakChunks(index + 1), 500); // Tambahkan jeda 500ms agar tidak crash
             };
-            window.speechSynthesis.speak(speech);
+            window.speechSynthesis.speak(utterances[index]);
         }
     }
-
-    speakNextChunk();
+    
+    window.speechSynthesis.cancel(); // Hentikan suara sebelumnya sebelum mulai baru
+    speakChunks(0);
 }
 
-function splitTextIntoChunks(text, maxLength) {
-    const words = text.split(' ');
-    let chunks = [];
-    let currentChunk = '';
-
-    words.forEach(word => {
-        if ((currentChunk + word).length > maxLength) {
-            chunks.push(currentChunk.trim());
-            currentChunk = '';
-        }
-        currentChunk += word + ' ';
-    });
-
-    if (currentChunk.trim()) {
-        chunks.push(currentChunk.trim());
+// Fungsi utama untuk membaca teks dari baris tabel
+function readText(rowId) {
+    const row = document.getElementById(rowId);
+    
+    if (!row) {
+        console.error(`Row dengan ID ${rowId} tidak ditemukan.`);
+        return;
     }
 
-    return chunks;
+    const nameElement = row.querySelector('.name');
+    const plateElement = row.querySelector('.plate');
+    const otherTextElement = row.querySelector('.otherText');
+
+    if (!nameElement || !plateElement || !otherTextElement) {
+        console.error('Elemen yang dibutuhkan tidak ditemukan dalam baris ini.');
+        return;
+    }
+
+    const name = nameElement.innerText;
+    const plate = plateElement.innerText;
+    const otherText = otherTextElement.innerText;
+
+    const formattedPlate = formatPlateNumber(plate);
+    const formattedName = capitalizeName(name);
+    const formattedOtherText = capitalizeOther(otherText);
+
+    const textToRead = `${formattedName}, ${formattedPlate}, ${formattedOtherText}`;
+    
+    window.speechSynthesis.cancel(); // Hentikan TTS yang sedang berjalan
+    speakLongText(textToRead);
 }
+    </script>
+    
+<script>
         document.getElementById('dataForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
