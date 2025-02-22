@@ -117,64 +117,52 @@
         let data = [];
         let lockedRows = {};
 
-        function formatPlateNumber(plate) {
-            return plate.replace(/(\d)/g, ' $1 ').split('').join(' ').replace(/\s+/g, ' ').trim();
-        }
-
-        function capitalizeName(name) {
-            return name.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
-        }
-
-        function capitalizeOther(otherText) {
-            return otherText.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
-        }
-
-function readText(rowId) {
-    const row = document.getElementById(rowId);
-    const name = row.querySelector('.name').innerText;
-    const plate = row.querySelector('.plate').innerText;
-    const otherText = row.querySelector('.otherText').innerText;
-
-    const formattedPlate = formatPlateNumber(plate);
-    const formattedName = capitalizeName(name);
-    const formattedOtherText = capitalizeOther(otherText);
-    const textToRead = `${formattedName}, ${formattedPlate}, ${formattedOtherText}`;
-
-    const notificationSound = document.getElementById('notifAudio');
-    
-    notificationSound.play().catch((error) => {
-        console.log('Audio play blocked:', error);
-    });
-
-    notificationSound.onended = () => {
-        speakText(textToRead);
-    };
+// Fungsi untuk memformat nomor plat
+function formatPlateNumber(plate) {
+    return plate.toUpperCase();
 }
 
-// Fungsi untuk membacakan teks panjang secara bertahap
+// Fungsi untuk memformat nama agar huruf pertama besar
+function capitalizeName(name) {
+    return name.replace(/\b\w/g, char => char.toUpperCase());
+}
+
+// Fungsi untuk memformat teks lain
+function capitalizeOther(text) {
+    return text.replace(/\b\w/g, char => char.toUpperCase());
+}
+
+// Fungsi untuk membacakan teks panjang secara bertahap tanpa terputus
 function speakLongText(text) {
     const utterances = [];
-    const maxChunkLength = 200; // Batasi 200 karakter per bagian
+    const maxChunkLength = 200; // Maksimal 200 karakter per bagian
     
     for (let i = 0; i < text.length; i += maxChunkLength) {
         let chunk = text.substring(i, i + maxChunkLength);
         let utterance = new SpeechSynthesisUtterance(chunk);
         utterance.lang = 'id-ID';
-        utterance.rate = 1.0; // Atur kecepatan bicara normal
-        utterance.pitch = 1.0; // Atur pitch normal
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+
         utterances.push(utterance);
     }
 
     function speakChunks(index) {
         if (index < utterances.length) {
             utterances[index].onend = () => {
-                setTimeout(() => speakChunks(index + 1), 500); // Tambahkan jeda 500ms agar tidak crash
+                setTimeout(() => speakChunks(index + 1), 500); // Beri jeda 500ms
             };
+
+            utterances[index].onerror = (event) => {
+                console.error("Error saat membaca teks:", event);
+                setTimeout(() => speakChunks(index + 1), 500); // Lanjut ke potongan berikutnya meskipun error
+            };
+
             window.speechSynthesis.speak(utterances[index]);
         }
     }
-    
-    window.speechSynthesis.cancel(); // Hentikan suara sebelumnya sebelum mulai baru
+
+    window.speechSynthesis.cancel(); // Hentikan pembacaan sebelumnya
     speakChunks(0);
 }
 
