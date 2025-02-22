@@ -1,5 +1,20 @@
 {
-  "names": ["Dirson", "Jamal", "Nadi", "Dondo"],
+  "names": [
+            "Bilal",
+            "Indra",
+            "Junaedi",
+            "Deni",
+            "Dirson",
+            "Endang",
+            "Budi",
+            "Kuswanto",
+            "Ramdan",
+            "Rizki",
+            "Daim",
+            "Fauzi",
+            "Nadi",
+            "Wahyu"
+          ],
   "plates": ["B 1234 XY", "B 5678 AB", "D 9876 PQ"],
   "texts": ["Dokumen Eldi telah selesai", "Buku serah terima Eldi, ditunggu di admin", "Ditunggu di admin", "Angkat telponnya"]
 }
