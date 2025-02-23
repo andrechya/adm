@@ -71,6 +71,6 @@ button:disabled {
     border: none;
     padding: 5px 10px;
     cursor: pointer;
-    position: fixed;
+    position: relative;
     right: 0;
 }
