@@ -46,125 +46,125 @@
         </table>
     </div>
 
-<script>
-    window.data = [];
+    <script>
+        window.data = [];
 
-    function capitalizeText(text) {
-        return text.replace(/\b\w/g, char => char.toUpperCase());
-    }
+        function capitalizeText(text) {
+            return text.replace(/\b\w/g, char => char.toUpperCase());
+        }
 
-    const notificationSound = document.getElementById('notifAudio');
+        const notificationSound = document.getElementById('notifAudio');
 
-    function playNotificationSound() {
-        return new Promise((resolve, reject) => {
-            notificationSound.play()
-                .then(() => 
-                    notificationSound.onended = resolve;
+        function playNotificationSound() {
+            return new Promise((resolve, reject) => {
+                notificationSound.play()
+                    .then(() => {
+                        notificationSound.onended = resolve;
+                    })
+                    .catch((error) => {
+                        console.log('Audio play blocked:', error);
+                        reject(error);
+                    });
+            });
+        }
+
+        function startReadText(text) {
+            const maxChunkLength = 150;
+            let utterances = [];
+
+            let words = text.split(" ");
+            let chunk = "";
+
+            for (let word of words) {
+                if ((chunk + word).length > maxChunkLength) {
+                    utterances.push(chunk.trim());
+                    chunk = "";
+                }
+                chunk += word + " ";
+            }
+            if (chunk) utterances.push(chunk.trim());
+
+            function speakChunk(index) {
+                return new Promise((resolve, reject) => {
+                    if (index >= utterances.length) {
+                        resolve();
+                        return;
+                    }
+
+                    let utterance = new SpeechSynthesisUtterance(utterances[index]);
+                    utterance.lang = 'id-ID';
+                    utterance.rate = 1.0;
+                    utterance.pitch = 1.0;
+
+                    utterance.onend = () => {
+                        setTimeout(() => resolve(speakChunk(index + 1)), 500);
+                    };
+
+                    utterance.onerror = (event) => {
+                        console.error("Error saat membaca teks:", event);
+                        reject(event);
+                    };
+
+                    window.speechSynthesis.speak(utterance);
+                });
+            }
+
+            return speakChunk(0).catch(error => console.error("Kesalahan saat membaca:", error));
+        }
+
+        function startReadingWithNotification(textToRead) {
+            playNotificationSound()
+                .then(() => {
+                    window.speechSynthesis.cancel();
+
+                    // TTS dibaca 2 kali
+                    let playCount = 0;
+                    function readTextTwice() {
+                        startReadText(textToRead)
+                            .then(() => {
+                                playCount++;
+                                if (playCount < 2) {
+                                    readTextTwice();
+                                }
+                            });
+                    }
+
+                    readTextTwice();
+                    console.log(`Text yang di baca:\n${textToRead}`);
                 })
                 .catch((error) => {
-                    console.log('Audio play blocked:', error);
-                    reject(error);
+                    console.error('Gagal memutar notifikasi:', error);
                 });
-        });
-    }
+        }
 
-    function startReadText(text) {
-        const maxChunkLength = 150;
-        let utterances = [];
-
-        let words = text.split(" ");
-        let chunk = "";
-
-        for (let word of words) {
-            if ((chunk + word).length > maxChunkLength) {
-                utterances.push(chunk.trim());
-                chunk = "";
+        function readText(rowId) {
+            const row = document.getElementById(rowId);
+            
+            if (!row) {
+                console.error(`Row dengan ID ${rowId} tidak ditemukan.`);
+                return;
             }
-            chunk += word + " ";
+
+            const nameElement = row.querySelector('.name');
+            const otherTextElement = row.querySelector('.otherText');
+
+            if (!nameElement || !otherTextElement) {
+                console.error('Elemen yang dibutuhkan tidak ditemukan dalam baris ini.');
+                return;
+            }
+
+            const name = nameElement.innerText.trim();
+            const otherText = otherTextElement.innerText.trim();
+
+            const formattedName = capitalizeText(name);
+            const formattedOtherText = capitalizeText(otherText);
+
+            const textToRead = `${formattedName}, ${formattedOtherText}`;
+
+            startReadingWithNotification(textToRead);
         }
-        if (chunk) utterances.push(chunk.trim());
-
-        function speakChunk(index) {
-            return new Promise((resolve, reject) => {
-                if (index >= utterances.length) {
-                    resolve();
-                    return;
-                }
-
-                let utterance = new SpeechSynthesisUtterance(utterances[index]);
-                utterance.lang = 'id-ID';
-                utterance.rate = 1.0;
-                utterance.pitch = 1.0;
-
-                utterance.onend = () => {
-                    setTimeout(() => resolve(speakChunk(index + 1)), 500);
-                };
-
-                utterance.onerror = (event) => {
-                    console.error("Error saat membaca teks:", event);
-                    reject(event);
-                };
-
-                window.speechSynthesis.speak(utterance);
-            });
-        }
-
-        return speakChunk(0).catch(error => console.error("Kesalahan saat membaca:", error));
-    }
-
-    function startReadingWithNotification(textToRead) {
-        playNotificationSound()
-            .then(() => {
-                window.speechSynthesis.cancel();
-
-                // TTS dibaca 2 kali
-                let playCount = 0;
-                function readTextTwice() {
-                    startReadText(textToRead)
-                        .then(() => {
-                            playCount++;
-                            if (playCount < 2) {
-                                readTextTwice();
-                            }
-                        });
-                }
-
-                readTextTwice();
-                console.log(`Text yang di baca:\n${textToRead}`);
-            })
-            .catch((error) => {
-                console.error('Gagal memutar notifikasi:', error);
-            });
-    }
-
-    function readText(rowId) {
-        const row = document.getElementById(rowId);
-        
-        if (!row) {
-            console.error(`Row dengan ID ${rowId} tidak ditemukan.`);
-            return;
-        }
-
-        const nameElement = row.querySelector('.name');
-        const otherTextElement = row.querySelector('.otherText');
-
-        if (!nameElement || !otherTextElement) {
-            console.error('Elemen yang dibutuhkan tidak ditemukan dalam baris ini.');
-            return;
-        }
-
-        const name = nameElement.innerText.trim();
-        const otherText = otherTextElement.innerText.trim();
-
-        const formattedName = capitalizeText(name);
-        const formattedOtherText = capitalizeText(otherText);
-
-        const textToRead = `${formattedName}, ${formattedOtherText}`;
-
-        startReadingWithNotification(textToRead);
-    }
-</script>
-<script src="./js/eventBtn1.js"></script>
-<script src="./js/loadConfig1.js"></script>
+    </script>
+    <script src="./js/eventBtn1.js"></script>
+    <script src="./js/loadConfig1.js"></script>
 </body>
 </html>
