@@ -1,4 +1,5 @@
 let lockedRows = {};
+
 document.getElementById('dataForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -18,8 +19,8 @@ function updateTable() {
     const tableBody = document.querySelector('#dataTable tbody');
     tableBody.innerHTML = '';
 
-    data.slice().reverse().forEach((item, index) => {
-        const row = tableBody.insertRow();
+    data.forEach((item, index) => {
+        const row = tableBody.insertRow(0); // Menambahkan baris baru di paling atas
 
         row.id = 'row-' + index;
 
@@ -37,14 +38,13 @@ function updateTable() {
         actionCell.innerHTML = `
             <button onclick="readText('row-${index}')">Dengarkan</button>
             <button class="lock-button" onclick="lockRow('row-${index}')">Lock</button>
-            <button class="remove-button" onclick="confirmRemoveRow('row-${index}')">Remove</button>
+            <button class="remove-button" onclick="confirmRemoveRow(${index})">Remove</button>
         `;
-    
+
         addEditableListener(nameCell);
         addEditableListener(textCell);
     });
 }
-
 
 function lockRow(rowId) {
     const row = document.getElementById(rowId);
@@ -81,7 +81,7 @@ function addEditableListener(cell) {
     });
 }
 
-function confirmRemoveRow(rowId) {
+function confirmRemoveRow(index) {
     Swal.fire({
         title: 'Apakah Anda yakin?',
         text: "Data ini akan dihapus!",
@@ -93,22 +93,19 @@ function confirmRemoveRow(rowId) {
         cancelButtonText: 'Batal'
     }).then((result) => {
         if (result.isConfirmed) {
-            removeRow(rowId);
+            removeRow(index);
         }
     });
 }
 
-function removeRow(rowId) {
-    if (lockedRows[rowId]) {
+function removeRow(index) {
+    if (lockedRows['row-' + index]) {
         alert("Baris ini terkunci dan tidak dapat dihapus!");
         return;
     }
-
-    const row = document.getElementById(rowId);
-    const index = Array.from(row.parentNode.children).indexOf(row);
 
     data.splice(index, 1);
     updateTable();
 }
 
-document.querySelectorAll('td[contenteditable="true"]').forEach(addEditableListener); 
+document.querySelectorAll('td[contenteditable="true"]').forEach(addEditableListener);
