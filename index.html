@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -47,12 +48,6 @@
                 </tr>
             </thead>
             <tbody>
-                <tr id="row1">
-                    <td class="name">Budi</td>
-                    <td class="plate">B 1234 CD</td>
-                    <td class="otherText">Silakan parkir</td>
-                    <td><button class="listen-btn" onclick="readText('row1')">Dengarkan</button></td>
-                </tr>
             </tbody>
         </table>
     </div>
@@ -83,16 +78,6 @@
         });
     }
 
-    function toggleListenButton(button, isDisabled) {
-        if (isDisabled) {
-            button.disabled = true;
-            button.style.backgroundColor = 'red';
-            button.innerText = 'Mendengarkan...';
-        } else {
-            button.style.display = 'none'; // Menghilangkan tombol setelah selesai membaca
-        }
-    }
-
     function startReadText(text) {
         const maxChunkLength = 150;
         let utterances = [];
@@ -118,7 +103,7 @@
 
                 let utterance = new SpeechSynthesisUtterance(utterances[index]);
                 utterance.lang = 'id-ID';
-                utterance.rate = 0.9;
+                utterance.rate = 1.0;
                 utterance.pitch = 1.0;
 
                 utterance.onend = () => {
@@ -137,12 +122,12 @@
         return speakChunk(0).catch(error => console.error("Kesalahan saat membaca:", error));
     }
 
-    function startReadingWithNotification(textToRead, button) {
+    function startReadingWithNotification(textToRead) {
         playNotificationSound()
             .then(() => {
                 window.speechSynthesis.cancel();
-                toggleListenButton(button, true); // Kunci tombol saat mulai membaca
 
+                // TTS dibaca 2 kali
                 let playCount = 0;
                 function readTextTwice() {
                     startReadText(textToRead)
@@ -150,14 +135,12 @@
                             playCount++;
                             if (playCount < 2) {
                                 readTextTwice();
-                            } else {
-                                toggleListenButton(button, false); // Hapus tombol setelah selesai membaca
                             }
                         });
                 }
 
                 readTextTwice();
-                console.log(`Text yang dibaca:\n${textToRead}`);
+                console.log(`Text yang di baca:\n${textToRead}`);
             })
             .catch((error) => {
                 console.error('Gagal memutar notifikasi:', error);
@@ -166,7 +149,7 @@
 
     function readText(rowId) {
         const row = document.getElementById(rowId);
-
+        
         if (!row) {
             console.error(`Row dengan ID ${rowId} tidak ditemukan.`);
             return;
@@ -175,9 +158,8 @@
         const nameElement = row.querySelector('.name');
         const plateElement = row.querySelector('.plate');
         const otherTextElement = row.querySelector('.otherText');
-        const listenButton = row.querySelector('.listen-btn'); // Ambil tombol "Dengarkan"
 
-        if (!nameElement || !plateElement || !otherTextElement || !listenButton) {
+        if (!nameElement || !plateElement || !otherTextElement) {
             console.error('Elemen yang dibutuhkan tidak ditemukan dalam baris ini.');
             return;
         }
@@ -192,7 +174,7 @@
 
         const textToRead = `${formattedName}, ${formattedPlate}, ${formattedOtherText}`;
 
-        startReadingWithNotification(textToRead, listenButton);
+        startReadingWithNotification(textToRead);
     }
 </script>
 <script src="./js/eventBtn.js"></script>
