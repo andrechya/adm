@@ -36,13 +36,28 @@ function updateTable() {
 
         const actionCell = row.insertCell(2);
         actionCell.innerHTML = `
-            <button onclick="readText('row-${index}')">Dengarkan</button>
+            <button class="listen-button" onclick="readText('row-${index}')">Dengarkan</button>
             <button class="lock-button" onclick="lockRow('row-${index}')">Lock</button>
             <button class="remove-button" onclick="confirmRemoveRow(${index})">Remove</button>
         `;
 
         addEditableListener(nameCell);
         addEditableListener(textCell);
+    });
+}
+
+function disableAllListenButtons() {
+    const buttons = document.querySelectorAll('.listen-button');
+    buttons.forEach(button => {
+        button.disabled = true;
+    });
+    console.log("Button Disabled");
+}
+
+function enableAllListenButtons() {
+    const buttons = document.querySelectorAll('.listen-button');
+    buttons.forEach(button => {
+        button.disabled = false;
     });
 }
 
