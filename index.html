@@ -56,6 +56,27 @@
 <script>
     window.data = [];
 
+    function toggleListenButtons(isDisabled) {
+    const listenBtn = document.querySelectorAll('.listen-button');
+    const lockBtn = document.querySelectorAll('.lock-button');
+    const removeBtn = document.querySelectorAll('.remove-button');
+
+    listenBtn.forEach(button => {
+        button.disabled = isDisabled;
+        button.style.backgroundColor = isDisabled ? 'red' : ''; // Ubah warna jadi merah saat disabled
+        button.innerText = isDisabled ? 'Mendengarkan...' : 'Dengarkan';
+    });
+
+    removeBtn.forEach(button => {
+        button.style.display = isDisabled ? 'none' : ''; // Hilangkan saat mendengarkan
+    });
+
+    lockBtn.forEach(button => {
+        button.style.display = isDisabled ? 'none' : ''; // Hilangkan saat mendengarkan
+    });
+
+    }   
+
     function formatPlateNumber(plate) {
         return plate.toUpperCase();
     }
@@ -125,23 +146,29 @@
 
     function startReadingWithNotification(textToRead) {
         playNotificationSound()
-            .then(() => {
+        .then(() => {
                 window.speechSynthesis.cancel();
-
+                toggleListenButtons(true); // Kunci semua tombol "Dengarkan"
+                console.log("Lock Any Button is Enabled")
                 // TTS dibaca 2 kali
+                setTimeout(() => {
                 let playCount = 0;
                 function readTextTwice() {
                     startReadText(textToRead)
                         .then(() => {
+                            
                             playCount++;
                             if (playCount < 2) {
                                 readTextTwice();
+                            } else {
+                                toggleListenButtons(false);
+                                console.log("Lock Any Button is disabled")
                             }
                         });
                 }
-
                 readTextTwice();
                 console.log(`Text yang di baca:\n${textToRead}`);
+            }, 0);
             })
             .catch((error) => {
                 console.error('Gagal memutar notifikasi:', error);

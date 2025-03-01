@@ -50,6 +50,27 @@
     <script>
         window.data = [];
 
+        function toggleListenButtons(isDisabled) {
+            const listenBtn = document.querySelectorAll('.listen-button');
+            const lockBtn = document.querySelectorAll('.lock-button');
+            const removeBtn = document.querySelectorAll('.remove-button');
+
+            listenBtn.forEach(button => {
+                button.disabled = isDisabled;
+                button.style.backgroundColor = isDisabled ? 'red' : ''; // Ubah warna jadi merah saat disabled
+                button.innerText = isDisabled ? 'Mendengarkan...' : 'Dengarkan';
+            });
+
+            removeBtn.forEach(button => {
+                button.style.display = isDisabled ? 'none' : ''; // Hilangkan saat mendengarkan
+            });
+
+            lockBtn.forEach(button => {
+                button.style.display = isDisabled ? 'none' : ''; // Hilangkan saat mendengarkan
+            });
+
+        }         
+
         function capitalizeText(text) {
             return text.replace(/\b\w/g, char => char.toUpperCase());
         }
@@ -94,7 +115,7 @@
 
                     let utterance = new SpeechSynthesisUtterance(utterances[index]);
                     utterance.lang = 'id-ID';
-                    utterance.rate = 0.9;
+                    utterance.rate = 1.0;
                     utterance.pitch = 1.0;
 
                     utterance.onend = () => {
@@ -113,30 +134,37 @@
             return speakChunk(0).catch(error => console.error("Kesalahan saat membaca:", error));
         }
 
+
         function startReadingWithNotification(textToRead) {
-            playNotificationSound()
-                .then(() => {
-                    window.speechSynthesis.cancel();
-
-                    // TTS dibaca 2 kali
-                    let playCount = 0;
-                    function readTextTwice() {
-                        startReadText(textToRead)
-                            .then(() => {
-                                playCount++;
-                                if (playCount < 3) {
-                                    readTextTwice();
-                                }
-                            });
-                    }
-
-                    readTextTwice();
-                    console.log(`Text yang di baca:\n${textToRead}`);
-                })
-                .catch((error) => {
-                    console.error('Gagal memutar notifikasi:', error);
-                });
-        }
+        playNotificationSound()
+        .then(() => {
+                window.speechSynthesis.cancel();
+                toggleListenButtons(true); // Kunci semua tombol "Dengarkan"
+                console.log("Lock Any Button is Enabled")
+                // TTS dibaca 2 kali
+                setTimeout(() => {
+                let playCount = 0;
+                function readTextTwice() {
+                    startReadText(textToRead)
+                        .then(() => {
+                            
+                            playCount++;
+                            if (playCount < 3) {
+                                readTextTwice();
+                            } else {
+                                toggleListenButtons(false);
+                                console.log("Lock Any Button is disabled")
+                            }
+                        });
+                }
+                readTextTwice();
+                console.log(`Text yang di baca:\n${textToRead}`);
+            }, 0);
+            })
+            .catch((error) => {
+                console.error('Gagal memutar notifikasi:', error);
+            });
+    }
 
         function readText(rowId) {
             const row = document.getElementById(rowId);
